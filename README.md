@@ -1,6 +1,6 @@
 # Model Picture Paradigm
 
-This project consists of two tasks. The first presents 115 images of models categorized as thin (38), average (39), or overweight (38). Attractiveness ratings are collected for each model. Arandom subset of 20 images is selected for each category. Those 60 images are presented during the second task.  
+This project consists of two tasks. The first presents 115 images of models categorized as thin (38), average (39), or overweight (38). Attractiveness ratings are collected for each model. A random subset of 20 images is selected from each category for use in during the second task.  
 
 ## Required software
 
