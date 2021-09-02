@@ -6,3 +6,6 @@ Pics/*
 
 # Output files
 PicRate_*
+
+# Open files
+*.m~
