@@ -4,7 +4,7 @@ function PicRatings_Model_BRF()
 global wRect w XCENTER rects mids COLORS KEYS PicRatings_Model_BRF
 
 prompt={'SUBJECT ID' 'Wave'};% 'fMRI? (1 = Y, 0 = N)'};
-defAns={'4444' '1'};% '0'};
+defAns={'4444' '1'};
 
 answer=inputdlg(prompt,'Please input subject info',1,defAns);
 
@@ -24,8 +24,6 @@ COLORS.rect = COLORS.GREEN;
 KbName('UnifyKeyNames');
 
 KEYS = struct;
-% KEYS.LEFT=KbName('leftarrow');
-% KEYS.RIGHT=KbName('rightarrow');
 KEYS.ONE= KbName('1!');
 KEYS.TWO= KbName('2@');
 KEYS.THREE= KbName('3#');
@@ -35,7 +33,6 @@ KEYS.SIX= KbName('6^');
 KEYS.SEVEN= KbName('7&');
 KEYS.EIGHT= KbName('8*');
 KEYS.NINE= KbName('9(');
-% KEYS.TEN= KbName('0)');
 rangetest = cell2mat(struct2cell(KEYS));
 KEYS.all = min(rangetest):max(rangetest);
 % KEYS.trigger = 52;
@@ -46,30 +43,21 @@ imgdir = [mfilesdir filesep 'Pics'];
 cd(imgdir);
 PICS =struct;
 % 
-    PICS.in.Un = dir('Thin*');
-    PICS.in.H = dir('Avg*');
-%     PICS.in.Un = dir('*_T*');
-%     PICS.in.H = dir('*_H*');
+    PICS.in.thin = dir('Thin*');
+    PICS.in.avg = dir('Avg*');
+    PICS.in.ow = dir('Ow*');
     
-    if isempty(PICS.in.Un) || isempty(PICS.in.H);
+    if isempty(PICS.in.thin) || isempty(PICS.in.avg) || isempty(PICS.in.ow);
         error('Could not find pics! Make sure a folder exists called "Pics" with all the appropriate images contained therein.')
     end
     
-    picnames = {PICS.in.Un.name PICS.in.H.name}';
-    %1 = Average, 0 = Thin
-    pictype = num2cell([zeros(length(PICS.in.Un),1); ones(length(PICS.in.H),1)]);
+    picnames = {PICS.in.thin.name PICS.in.avg.name PICS.in.ow.name}';
+    %2 = Overweight, 1 = Average, 0 = Thin
+    pictype = num2cell([zeros(length(PICS.in.thin),1); ones(length(PICS.in.avg),1); 2.*ones(length(PICS.in.ow),1)]);
     picnames = [picnames pictype];
     picnames = picnames(randperm(size(picnames,1)),:);
 
-
-% jitter = BalanceTrials(length(picnames),1,[1 2 3]);
-
-PicRatings_Model_BRF = struct('filename',picnames(:,1),'PicType',picnames(:,2),'Rate_Att',0); %,'Jitter',[],'FixOnset',[],'PicOnset',[],'RatingOnset',[],'RT',[]); %,'Rate_Crave',0);
-
-% for hhh = 1:length(PicRatings_Model_BRF);
-%     
-%     PicRatings_Model_BRF(hhh).Jitter = jitter(hhh);
-% end
+PicRatings_Model_BRF = struct('filename',picnames(:,1),'PicType',picnames(:,2),'Rate_Att',0);
 
 
 %% Keyboard stuff for fMRI...
@@ -97,7 +85,7 @@ commandwindow;
 
 %%
 %change this to 0 to fill whole screen
-DEBUG=0;
+DEBUG=1;
 
 %set up the screen and dimensions
 
@@ -107,7 +95,7 @@ Screen('Preference', 'SkipSyncTests', 1);
 
 screenNumber=max(Screen('Screens'));
 
-if DEBUG==1;
+if DEBUG==1
     %create a rect for the screen
     winRect=[0 0 640 480];
     %establish the center points
@@ -171,38 +159,27 @@ KbWait([],3);
 WaitSecs(1);
 
 
-for x = 1:20:length(PicRatings_Model_BRF);  %UPDATE TO LENGTH OF GO PICS
-    for y = 1:19;
+for x = 1:20:length(PicRatings_Model_BRF)
+    for y = 1:19
         xy = x+y;
         if xy > length(PicRatings_Model_BRF)
             break
         end
         
-%         DrawFormattedText(w,'+','center','center',COLORS.WHITE);
-%         fixon = Screen('Flip',w);
-%         PicRatings_Model_BRF(xy).FixOnset = fixon - scan_sec;
-%         WaitSecs(PicRatings_Model_BRF(xy).Jitter);
-        
         dat_pic = getfield(PicRatings_Model_BRF,{xy},'filename');
         tp = imread(dat_pic);
         tpx = Screen('MakeTexture',w,tp);          
         Screen('DrawTexture',w,tpx,[],picloc);
-%         picon = Screen('Flip',w);
-%         PicRatings_Model_BRF(xy).PicOnset = picon - scan_sec;
-%         WaitSecs(5);
-%         
-%         Screen('DrawTexture',w,tpx);
+
         drawRatings([],w);
         DrawFormattedText(w,verbage,'center',(wRect(4)*.75),COLORS.WHITE);
-%         rateon = Screen('Flip',w);
-%         PicRatings_Model_BRF(xy).RatingOnset = rateon - scan_sec;
+
         Screen('Flip',w);
         
         FlushEvents();
             while 1
                 [keyisdown, ~, keycode] = KbCheck();
-                if (keyisdown==1 && any(keycode(KEYS.all)))
-%                     PicRatings_Model_BRF(xy).RT = rt - rateon;
+                if (keyisdown==1 && any(keycode(KEYS.all)))                   
                     
                     rating = KbName(find(keycode));
                     rating = str2double(rating(1));
@@ -215,9 +192,8 @@ for x = 1:20:length(PicRatings_Model_BRF);  %UPDATE TO LENGTH OF GO PICS
                     break;
                 end
             end
-            %Record response here.
-%             if q == 1;
-            if rating == 0; %Zero key is used for 10. Thus check and correct for when they press 0.
+
+            if rating == 0 %Zero key is used for 10. Thus check and correct for when they press 0.
                 rating = 10;
             end
             
@@ -227,6 +203,7 @@ for x = 1:20:length(PicRatings_Model_BRF);  %UPDATE TO LENGTH OF GO PICS
            FlushEvents();
            WaitSecs(.25);
     end
+    
     %Take a break every 20 pics.
     Screen('Flip',w);
     DrawFormattedText(w,'Press any key when you are ready to continue','center','center',COLORS.WHITE);
@@ -239,16 +216,18 @@ Screen('Flip',w);
 WaitSecs(.5);
 
 
-%% Sort & Save List of Foods.
-%Sort by top appetizing ratings for each set.
-fields = {'name' 'pictype' 'rating'}; % 'jitter' 'FixOnset' 'PicOnset' 'RatingOnset' 'RT'};
+%% Sort & Save list of image ratings
+fields = {'name' 'pictype' 'rating'}; 
 presort = struct2cell(PicRatings_Model_BRF)';
-pre_H = presort(([presort{:,2}]==1),:);
-pre_U = presort(([presort{:,2}]==0),:);
-postsort_H = sortrows(pre_H,-3);    %Sort descending by column 3
-postsort_U = sortrows(pre_U,-3);
-PicRating_Mod.Avg = cell2struct(postsort_H,fields,2);
-PicRating_Mod.Thin = cell2struct(postsort_U,fields,2);
+pre_avg = presort(([presort{:,2}]==1),:);
+pre_thin = presort(([presort{:,2}]==0),:);
+pre_ow = presort(([presort{:,2}]==2),:);
+postsort_avg = sortrows(pre_avg,-3);    %Sort descending by column 3
+postsort_thin = sortrows(pre_thin,-3);
+postsort_ow = sortrows(pre_ow,-3);
+PicRating_Mod.Avg = cell2struct(postsort_avg,fields,2);
+PicRating_Mod.Thin = cell2struct(postsort_thin,fields,2);
+PicRating_Mod.Ow = cell2struct(postsort_ow,fields,2);
 
 savedir = [mfilesdir filesep 'Results'];
 
@@ -303,7 +282,7 @@ squart_y = wRect(4)*.8;         %Rects start @~80% down screen.
 rects = zeros(4,num_rects);
 
 % for row = 1:DIMS.grid_row;
-    for col = 1:num_rects;
+    for col = 1:num_rects
 %         currr = ((row-1)*DIMS.grid_col)+col;
         rects(1,col)= squart_x + (col-1)*(square_side+gap);
         rects(2,col)= squart_y;
@@ -330,7 +309,7 @@ if nargin >= 1 && ~isempty(varargin{1})
     key=find(response);
     if length(key)>1
         key=key(1);
-    end;
+    end
     
     switch key
         
@@ -352,8 +331,6 @@ if nargin >= 1 && ~isempty(varargin{1})
             choice=8;
         case {KEYS.NINE}
             choice=9;
-%         case {KEYS.TEN}
-%             choice = 10;
     end
     
     if exist('choice','var')
@@ -379,11 +356,6 @@ Screen('TextFont', window, 'Arial');
 Screen('TextStyle', window, 1);
 oldSize = Screen('TextSize',window,35);
 
-% Screen('TextFont', w2, 'Arial');
-% Screen('TextStyle', w2, 1)
-% Screen('TextSize',w2,60);
-
-
 
 %draw all the squares
 Screen('FrameRect',window,colors,rects,1);
@@ -393,7 +365,7 @@ Screen('FrameRect',window,colors,rects,1);
 
 
 %draw the text (1-10)
-for n = 1:9;
+for n = 1:9
     numnum = sprintf('%d',n);
     CenterTextOnPoint(window,numnum,mids(1,n),mids(2,n),COLORS.WHITE);
 end
@@ -406,11 +378,7 @@ end
 
 %%
 function [nx, ny, textbounds] = CenterTextOnPoint(win, tstring, sx, sy,color)
-% [nx, ny, textbounds] = DrawFormattedText(win, tstring [, sx][, sy][, color][, wrapat][, flipHorizontal][, flipVertical][, vSpacing][, righttoleft])
-%
-% 
 
-numlines=1;
 
 if nargin < 1 || isempty(win)
     error('CenterTextOnPoint: Windowhandle missing!');
@@ -429,29 +397,7 @@ if isempty(sx)
     sx=0;
 end
 
-% if ischar(sx) && strcmpi(sx, 'center')
-%     xcenter=1;
-%     sx=0;
-% else
-%     xcenter=0;
-% end
-
 xcenter=0;
-
-% No text wrapping by default:
-% if nargin < 6 || isempty(wrapat)
-    wrapat = 0;
-% end
-
-% No horizontal mirroring by default:
-% if nargin < 7 || isempty(flipHorizontal)
-    flipHorizontal = 0;
-% end
-
-% No vertical mirroring by default:
-% if nargin < 8 || isempty(flipVertical)
-    flipVertical = 0;
-% end
 
 % No vertical mirroring by default:
 % if nargin < 9 || isempty(vSpacing)
@@ -618,48 +564,15 @@ while ~isempty(tstring)
         curstring = cast(curstring, stringclass);
         
         % Need bounding box?
-%         if xcenter || flipHorizontal || flipVertical
-            % Compute text bounding box for this substring:
+
             bbox=Screen('TextBounds', win, curstring, [], [], [], righttoleft);
-%         end
-        
-        % Horizontally centered output required?
-%         if xcenter
-            % Yes. Compute dh, dv position offsets to center it in the center of window.
-%             [rect,dh] = CenterRect(bbox, winRect);
+
             [rect,dh] = CenterRect(bbox, textRect);
             % Set drawing cursor to horizontal x offset:
             xp = dh;
-%         end
-            
-%         if flipHorizontal || flipVertical
-%             textbox = OffsetRect(bbox, xp, yp);
-%             [xc, yc] = RectCenter(textbox);
-% 
-%             % Make a backup copy of the current transformation matrix for later
-%             % use/restoration of default state:
-%             Screen('glPushMatrix', win);
-% 
-%             % Translate origin into the geometric center of text:
-%             Screen('glTranslate', win, xc, yc, 0);
-% 
-%             % Apple a scaling transform which flips the direction of x-Axis,
-%             % thereby mirroring the drawn text horizontally:
-%             if flipVertical
-%                 Screen('glScale', win, 1, -1, 1);
-%             end
-%             
-%             if flipHorizontal
-%                 Screen('glScale', win, -1, 1, 1);
-%             end
-% 
-%             % We need to undo the translations...
-%             Screen('glTranslate', win, -xc, -yc, 0);
-%             [nx ny] = Screen('DrawText', win, curstring, xp, yp, color, [], [], righttoleft);
-%             Screen('glPopMatrix', win);
-%         else
+        
             [nx ny] = Screen('DrawText', win, curstring, xp, yp, color, [], [], righttoleft);
-%         end
+
     else
         % This is an empty substring (pure linefeed). Just update cursor
         % position:
