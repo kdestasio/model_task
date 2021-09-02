@@ -1,1 +1,8 @@
+# System files
 .DS_Store
+
+# Image files
+Pics/*
+
+# Output files
+PicRate_*
