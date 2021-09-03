@@ -45,7 +45,7 @@ PICS =struct;
 % 
     PICS.in.thin = dir('Thin*');
     PICS.in.avg = dir('Avg*');
-    PICS.in.ow = dir('Ow*');
+    PICS.in.ow = dir('ow*');
     
     if isempty(PICS.in.thin) || isempty(PICS.in.avg) || isempty(PICS.in.ow);
         error('Could not find pics! Make sure a folder exists called "Pics" with all the appropriate images contained therein.')
