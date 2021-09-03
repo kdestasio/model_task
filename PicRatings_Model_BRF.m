@@ -192,10 +192,6 @@ for x = 1:20:length(PicRatings_Model_BRF)
                     break;
                 end
             end
-
-            if rating == 0 %Zero key is used for 10. Thus check and correct for when they press 0.
-                rating = 10;
-            end
             
             PicRatings_Model_BRF(xy).Rate_Att = rating;
            
