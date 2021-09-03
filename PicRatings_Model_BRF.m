@@ -85,7 +85,7 @@ commandwindow;
 
 %%
 %change this to 0 to fill whole screen
-DEBUG=1;
+DEBUG=0;
 
 %set up the screen and dimensions
 
