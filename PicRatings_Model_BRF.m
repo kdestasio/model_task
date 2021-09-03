@@ -160,7 +160,7 @@ WaitSecs(1);
 
 
 for x = 1:20:length(PicRatings_Model_BRF)
-    for y = 1:19
+    for y = 0:19
         xy = x+y;
         if xy > length(PicRatings_Model_BRF)
             break
