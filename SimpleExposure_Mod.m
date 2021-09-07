@@ -95,9 +95,6 @@ end
 %find the image directory by figuring out where the .m is kept
 [mdir,~,~] = fileparts(which('SimpleExposure_Mod.m'));
 
-% [ratedir,~,~] = fileparts(which('SimpleExposure.m'));
-% picratefolder = fullfile(mdir,'Ratings');   %XXX: Double check this is correct folder.
-
 %UPDATE HERE TO CHANGE IMAGE DIRECTORY
 imgdir = fullfile(mdir,'Pics');
 
