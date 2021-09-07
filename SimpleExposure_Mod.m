@@ -9,7 +9,7 @@ defAns={'4444' '1' '1'};
 
 answer=inputdlg(prompt,'Please input subject info',1,defAns);
 
-ID=str2double(answer{1});
+ID = str2double(answer{1});
 fmri = str2double(answer{2});
 % COND = str2double(answer{2});
 SESS = str2double(answer{3});
@@ -86,7 +86,7 @@ if isempty(macbook)
     macbook=-1;
 end
 
-%in case you?re not hooked up to the scanner, then just work off the keyboard
+%in case you're not hooked up to the scanner, then just work off the keyboard
 if isempty(xkeys)
     xkeys=macbook;
 end
@@ -151,7 +151,11 @@ SimpExpMod = struct;
 pictype = [ones(STIM.trialsper,1); zeros(STIM.trialsper,1)];
 
 %Make long list of randomized #s to represent each pic
-piclist = [randperm(length(PICS.in.hi))'; randperm(length(PICS.in.lo))'];
+if length(pictype) ~= (length(PICS.in.hi) + length(PICS.in.lo))
+    error('Incorrect number of images in /PICS. Expected %d and found %d.', length(pictype), (length(PICS.in.hi) + length(PICS.in.lo)))
+else
+    piclist = [randperm(length(PICS.in.hi))'; randperm(length(PICS.in.lo))'];
+end
 
 
 %Concatenate these into a long list of trial types.
