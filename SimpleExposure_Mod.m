@@ -5,6 +5,7 @@ global KEYS COLORS w wRect XCENTER YCENTER PICS STIM SimpExpMod trial
 %% IMPORTANT VARIABLES
 [mdir,~,~] = fileparts(which('SimpleExposure_Mod.m')); % find the directory that houses this script
 imgdir = fullfile(mdir,'Pics'); % UPDATE HERE TO CHANGE IMAGE DIRECTORY
+savedir = [mdir filesep 'Results' filesep]; % output will be saved in this directory
 trials_perblock = 20; % Should equal number of images per category
 trials_total = 40; % Should equal total number of images
 
@@ -225,9 +226,6 @@ for block = 1:STIM.blocks
 end
 
 %% Save all the data
-
-%get the parent directory, which is one level up from mfilesdir
-savedir = [mdir filesep 'Results' filesep];
 
 cd(savedir)
 savename = ['SimpExp_Mod_' num2str(ID) '-' num2str(SESS) '.mat'];

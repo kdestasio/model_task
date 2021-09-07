@@ -5,6 +5,8 @@ global wRect w XCENTER rects mids COLORS KEYS PicRatings_Model_BRF
 %% Set important variables
 [mfilesdir,~,~] = fileparts(which('PicRatings_Model_BRF.m')); %find the directory that houses this script
 imgdir = [mfilesdir filesep 'Pics']; %UPDATE HERE TO CHANGE IMAGE DIRECTORY
+savedir = [mfilesdir filesep 'Results']; %output will be saved in this directory
+
 DEBUG=1; %1 debug, 0 display normally
 
 %% SETUP
@@ -218,8 +220,6 @@ postsort_ow = sortrows(pre_ow,-3);
 PicRating_Mod.Avg = cell2struct(postsort_avg,fields,2);
 PicRating_Mod.Thin = cell2struct(postsort_thin,fields,2);
 PicRating_Mod.Ow = cell2struct(postsort_ow,fields,2);
-
-savedir = [mfilesdir filesep 'Results'];
 
 if SESS == 1
     savefilename = sprintf('PicRate_Mod%d.mat',ID);
