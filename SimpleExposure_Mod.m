@@ -104,23 +104,24 @@ function SimpleExposure_Mod(varargin)
     PICS =struct;
     PICS.in.hi = dir('Avg*');
     PICS.in.lo = dir('Thin*');
+    PICS.in.ow = dir('ow*');
     
     %Check if pictures are present. If not, throw error.
-    if isempty(PICS.in.hi) || isempty(PICS.in.lo)
+    if isempty(PICS.in.hi) || isempty(PICS.in.lo) || isempty(PICS.in.ow)
         error('Could not find pics. Please ensure pictures are found in a folder names IMAGES within the folder containing the .m task file.');
     end
     
     %% Fill in rest of pertinent info
     SimpExpMod = struct;
     
-    %1 = Avg, 0 = Thin
-    pictype = [ones(STIM.trialsper,1); zeros(STIM.trialsper,1)];
+    %0 = Thin, 1 = Avg, 2 = Overweight
+    pictype = [zeros(STIM.trialsper,1); ones(STIM.trialsper,1); 2.*ones(length(PICS.in.ow),1)];
     
     %Make long list of randomized #s to represent each pic
-    if length(pictype) ~= (length(PICS.in.hi) + length(PICS.in.lo))
-        error('Incorrect number of images in /PICS. Expected %d and found %d.', length(pictype), (length(PICS.in.hi) + length(PICS.in.lo)))
+    if length(pictype) ~= (length(PICS.in.hi) + length(PICS.in.lo) + length(PICS.in.ow))
+        error('Incorrect number of images in /PICS. Expected %d and found %d.', length(pictype), (length(PICS.in.hi) + length(PICS.in.lo) + length(PICS.in.ow)))
     else
-        piclist = [randperm(length(PICS.in.hi))'; randperm(length(PICS.in.lo))'];
+        piclist = [randperm(length(PICS.in.hi))'; randperm(length(PICS.in.lo))'; randperm(length(PICS.in.ow))'];
     end
     
     %Concatenate these into a long list of trial types.
