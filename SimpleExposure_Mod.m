@@ -19,7 +19,7 @@ fmri = str2double(answer{2});
 SESS = str2double(answer{3});
 % prac = str2double(answer{4});
 
- rng(ID); %Seed random number generator with subject ID
+rng(ID); %Seed random number generator with subject ID
 d = clock;
 
 
@@ -99,12 +99,10 @@ end
 cd(imgdir);
  
 PICS =struct;
-
 PICS.in.hi = dir('Avg*');
 PICS.in.lo = dir('Thin*');
 
 %Check if pictures are present. If not, throw error.
-%Could be updated to search computer to look for pics...
 if isempty(PICS.in.hi) || isempty(PICS.in.lo)
     error('Could not find pics. Please ensure pictures are found in a folder names IMAGES within the folder containing the .m task file.');
 end
@@ -122,15 +120,14 @@ else
     piclist = [randperm(length(PICS.in.hi))'; randperm(length(PICS.in.lo))'];
 end
 
-
 %Concatenate these into a long list of trial types.
 trial_types = [pictype piclist];
 shuffled = trial_types(randperm(size(trial_types,1)),:);
 
 jitter = BalanceTrials(STIM.totes,1,STIM.jitter);
 
- for x = 1:STIM.blocks
-     for y = 1:STIM.trials
+for x = 1:STIM.blocks
+    for y = 1:STIM.trials
          tc = (x-1)*STIM.trials + y;
          SimpExpMod.data(tc).pictype = shuffled(tc,1);
          
@@ -166,21 +163,15 @@ Screen('Preference', 'SkipSyncTests', 1);
 screenNumber=max(Screen('Screens'));
 
 if DEBUG==1
-    %create a rect for the screen
-    winRect=[0 0 640 480];
-    %establish the center points
-    XCENTER=320;
-    YCENTER=240;
+    winRect=[0 0 640 480]; %create a rect for the screen
+    XCENTER=320; % establish the center points X
+    YCENTER=240; % and Y
 else
-    %change screen resolution
-%     Screen('Resolution',0,1024,768,[],32);
-    
     %this gives the x and y dimensions of our screen, in pixels.
     [swidth, sheight] = Screen('WindowSize', screenNumber);
     XCENTER=fix(swidth/2);
     YCENTER=fix(sheight/2);
-    %when you leave winRect blank, it just fills the whole screen
-    winRect=[];
+    winRect=[]; %when you leave winRect blank, it just fills the whole screen
 end
 
 %open a window on that monitor. 32 refers to 32 bit color depth (millions of
@@ -192,9 +183,7 @@ end
 %%
 %you can set the font sizes and styles here
 Screen('TextFont', w, 'Arial');
-%Screen('TextStyle', w, 1);
 Screen('TextSize',w,30);
-
 KbName('UnifyKeyNames');
 
 %% Where should pics go
