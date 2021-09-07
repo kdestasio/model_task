@@ -2,8 +2,12 @@
 
 global KEYS COLORS w wRect XCENTER YCENTER PICS STIM SimpExpMod trial
 
-% This is for food & or model exposure!
+%% IMPORTANT VARIABLES
+[mdir,~,~] = fileparts(which('SimpleExposure_Mod.m')); % find the directory that houses this script
+imgdir = fullfile(mdir,'Pics'); % UPDATE HERE TO CHANGE IMAGE DIRECTORY
+DEBUG=0; % 1 debug, 0 display normally
 
+%% SETUP
 prompt={'SUBJECT ID' 'fMRI: 1 = Yes; 0 = No' 'Session: 1 = Pre; 2 = Post'};
 defAns={'4444' '1' '1'};
 
@@ -91,13 +95,7 @@ if isempty(xkeys)
     xkeys=macbook;
 end
 
-%% Find & load in pics
-%find the image directory by figuring out where the .m is kept
-[mdir,~,~] = fileparts(which('SimpleExposure_Mod.m'));
-
-%UPDATE HERE TO CHANGE IMAGE DIRECTORY
-imgdir = fullfile(mdir,'Pics');
-
+%% Get & load in pics
 cd(imgdir);
  
 PICS =struct;
@@ -160,11 +158,7 @@ commandwindow;
 
 
 %%
-%change this to 0 to fill whole screen
-DEBUG=0;
-
 %set up the screen and dimensions
-
 %list all the screens, then just pick the last one in the list (if you have
 %only 1 monitor, then it just chooses that one)
 Screen('Preference', 'SkipSyncTests', 1);

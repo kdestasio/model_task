@@ -2,7 +2,7 @@
 .DS_Store
 
 # Image files
-Pics/*
+Pics*/*
 
 # Output files
 PicRate_*
