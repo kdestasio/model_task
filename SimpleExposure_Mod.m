@@ -104,20 +104,21 @@ cd(imgdir);
 PICS =struct;
 PICS.in.avg = dir('Avg*');
 PICS.in.thin = dir('Thin*');
+PICS.in.ow = dir('ow*');
 
 %Check if pictures are present. If not, throw error.
-if isempty(PICS.in.avg) || isempty(PICS.in.thin)
+if isempty(PICS.in.avg) || isempty(PICS.in.thin)  || is.empty(PICS.in.ow)
     error('Could not find pics. Please ensure pictures are found in a folder names IMAGES within the folder containing the .m task file.');
 end
 
 %% Fill in rest of pertinent info
 SimpExpMod = struct;
 
-%1 = Avg, 0 = Thin
-pictype = [ones(STIM.trialsper,1); zeros(STIM.trialsper,1)];
+%2 = overweight, 1 = Avg, 0 = Thin
+pictype = num2cell([zeros(length(PICS.in.thin),1); ones(length(PICS.in.avg),1); 2.*ones(length(PICS.in.ow),1)]);
 
 %Make long list of randomized #s to represent each pic
-if length(pictype) ~= (length(PICS.in.avg) + length(PICS.in.thin))
+if length(pictype) ~= (length(PICS.in.avg) + length(PICS.in.thin) + length(PICS.in.ow))
     error('Incorrect number of images in /PICS. Expected %d and found %d.', length(pictype), (length(PICS.in.avg) + length(PICS.in.thin)))
 else
     piclist = [randperm(length(PICS.in.avg))'; randperm(length(PICS.in.thin))'];
