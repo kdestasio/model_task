@@ -102,15 +102,10 @@ if DEBUG==1
     XCENTER=320;
     YCENTER=240;
 else
-    %change screen resolution
-%     Screen('Resolution',0,1024,768,[],32);
-    
-    %this gives the x and y dimensions of our screen, in pixels.
-    [swidth, sheight] = Screen('WindowSize', screenNumber);
+    [swidth, sheight] = Screen('WindowSize', screenNumber); %this gives the x and y dimensions of our screen, in pixels.
     XCENTER=fix(swidth/2);
     YCENTER=fix(sheight/2);
-    %when you leave winRect blank, it just fills the whole screen
-    winRect=[];
+    winRect=[]; %when you leave winRect blank, it just fills the whole screen
 end
 
 %open a window on that monitor. 32 refers to 32 bit color depth (millions of
@@ -124,7 +119,6 @@ picloc = [XCENTER-150, wRect(4)*.1, XCENTER+150, (wRect(4)*.1)+525];
 %%
 %you can set the font sizes and styles here
 Screen('TextFont', w, 'Arial');
-%Screen('TextStyle', w, 1);
 Screen('TextSize',w,35);
 
 %% Dat Grid

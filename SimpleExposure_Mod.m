@@ -5,7 +5,7 @@ global KEYS COLORS w wRect XCENTER YCENTER PICS STIM SimpExpMod trial
 %% IMPORTANT VARIABLES
 [mdir,~,~] = fileparts(which('SimpleExposure_Mod.m')); % find the directory that houses this script
 imgdir = fullfile(mdir,'Pics'); % UPDATE HERE TO CHANGE IMAGE DIRECTORY
-DEBUG=0; % 1 debug, 0 display normally
+DEBUG=1; % 1 debug, 0 display normally
 
 %% SETUP
 prompt={'SUBJECT ID' 'fMRI: 1 = Yes; 0 = No' 'Session: 1 = Pre; 2 = Post'};
