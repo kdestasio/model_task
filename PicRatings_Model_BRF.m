@@ -1,8 +1,13 @@
 function PicRatings_Model_BRF()
 % Rate all images, choose top X picsn    
-
 global wRect w XCENTER rects mids COLORS KEYS PicRatings_Model_BRF
 
+%% Set important variables
+[mfilesdir,~,~] = fileparts(which('PicRatings_Model_BRF.m')); %find the directory that houses this script
+imgdir = [mfilesdir filesep 'Pics']; %UPDATE HERE TO CHANGE IMAGE DIRECTORY
+DEBUG=1; %1 debug, 0 display normally
+
+%% SETUP
 prompt={'SUBJECT ID' 'Wave'};% 'fMRI? (1 = Y, 0 = N)'};
 defAns={'4444' '1'};
 
@@ -38,11 +43,9 @@ KEYS.all = min(rangetest):max(rangetest);
 % KEYS.trigger = 52;
 
 %%
-[mfilesdir,~,~] = fileparts(which('PicRatings_Model_BRF.m'));
-imgdir = [mfilesdir filesep 'Pics'];
 cd(imgdir);
 PICS =struct;
-% 
+
     PICS.in.thin = dir('Thin*');
     PICS.in.avg = dir('Avg*');
     PICS.in.ow = dir('ow*');
@@ -84,9 +87,6 @@ PicRatings_Model_BRF = struct('filename',picnames(:,1),'PicType',picnames(:,2),'
 commandwindow;
 
 %%
-%change this to 0 to fill whole screen
-DEBUG=0;
-
 %set up the screen and dimensions
 
 %list all the screens, then just pick the last one in the list (if you have
