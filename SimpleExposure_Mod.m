@@ -5,7 +5,10 @@ global KEYS COLORS w wRect XCENTER YCENTER PICS STIM SimpExpMod trial
 %% IMPORTANT VARIABLES
 [mdir,~,~] = fileparts(which('SimpleExposure_Mod.m')); % find the directory that houses this script
 imgdir = fullfile(mdir,'Pics'); % UPDATE HERE TO CHANGE IMAGE DIRECTORY
-DEBUG=1; % 1 debug, 0 display normally
+trials_perblock = 20; % Should equal number of images per category
+trials_total = 40; % Should equal total number of images
+
+DEBUG=0; % 1 debug, 0 display normally
 
 %% SETUP
 prompt={'SUBJECT ID' 'fMRI: 1 = Yes; 0 = No' 'Session: 1 = Pre; 2 = Post'};
@@ -68,9 +71,9 @@ COLORS.rect = COLORS.GREEN;
 
 STIM = struct;
 STIM.blocks = 1;
-STIM.trials = 40;
+STIM.trials = trials_total;
 STIM.totes = STIM.blocks*STIM.trials;
-STIM.trialsper = 20;
+STIM.trialsper = trials_perblock;
 STIM.trialdur = 5;
 % STIM.rate_dur = 1;
 STIM.jitter = [4 5 6 7 8];
@@ -99,11 +102,11 @@ end
 cd(imgdir);
  
 PICS =struct;
-PICS.in.hi = dir('Avg*');
-PICS.in.lo = dir('Thin*');
+PICS.in.avg = dir('Avg*');
+PICS.in.thin = dir('Thin*');
 
 %Check if pictures are present. If not, throw error.
-if isempty(PICS.in.hi) || isempty(PICS.in.lo)
+if isempty(PICS.in.avg) || isempty(PICS.in.thin)
     error('Could not find pics. Please ensure pictures are found in a folder names IMAGES within the folder containing the .m task file.');
 end
 
@@ -114,10 +117,10 @@ SimpExpMod = struct;
 pictype = [ones(STIM.trialsper,1); zeros(STIM.trialsper,1)];
 
 %Make long list of randomized #s to represent each pic
-if length(pictype) ~= (length(PICS.in.hi) + length(PICS.in.lo))
-    error('Incorrect number of images in /PICS. Expected %d and found %d.', length(pictype), (length(PICS.in.hi) + length(PICS.in.lo)))
+if length(pictype) ~= (length(PICS.in.avg) + length(PICS.in.thin))
+    error('Incorrect number of images in /PICS. Expected %d and found %d.', length(pictype), (length(PICS.in.avg) + length(PICS.in.thin)))
 else
-    piclist = [randperm(length(PICS.in.hi))'; randperm(length(PICS.in.lo))'];
+    piclist = [randperm(length(PICS.in.avg))'; randperm(length(PICS.in.thin))'];
 end
 
 %Concatenate these into a long list of trial types.
@@ -132,9 +135,9 @@ for x = 1:STIM.blocks
          SimpExpMod.data(tc).pictype = shuffled(tc,1);
          
          if shuffled(tc,1) == 1
-            SimpExpMod.data(tc).picname = PICS.in.hi(shuffled(tc,2)).name;
+            SimpExpMod.data(tc).picname = PICS.in.avg(shuffled(tc,2)).name;
          elseif shuffled(tc,1) == 0
-             SimpExpMod.data(tc).picname = PICS.in.lo(shuffled(tc,2)).name;
+             SimpExpMod.data(tc).picname = PICS.in.thin(shuffled(tc,2)).name;
          end
          
          SimpExpMod.data(tc).jitter = jitter(tc);
