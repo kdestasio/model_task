@@ -1,8 +1,9 @@
 # System files
 .DS_Store
 
-# Image files
-Pics*/*
+# Directories
+Pics/*
+Results/*
 
 # Output files
 PicRate_*
