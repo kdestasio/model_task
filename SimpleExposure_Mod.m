@@ -8,7 +8,7 @@ function SimpleExposure_Mod(varargin)
     savedir = [mdir filesep 'Results' filesep]; % output will be saved in this directory
     trials_perblock = 20; % Should equal number of images per category
     trials_total = 40; % Should equal total number of images
-    DEBUG=0; % 1 debug, 0 display normally
+    DEBUG=1; % 1 debug, 0 display normally
     
     %% SETUP
     prompt={'SUBJECT ID' 'fMRI: 1 = Yes; 0 = No' 'Session: 1 = Pre; 2 = Post'};
@@ -139,14 +139,14 @@ function SimpleExposure_Mod(varargin)
                 SimpExpMod.data(tc).picname = PICS.in.hi(shuffled(tc,2)).name;
              elseif shuffled(tc,1) == 0
                  SimpExpMod.data(tc).picname = PICS.in.lo(shuffled(tc,2)).name;
+             elseif shuffled(tc,1) == 2
+                 SimpExpMod.data(tc).picname = PICS.in.ow(shuffled(tc,2)).name;
              end
              
              SimpExpMod.data(tc).jitter = jitter(tc);
              SimpExpMod.data(tc).fix_onset = NaN;
              SimpExpMod.data(tc).pic_onset = NaN;
              SimpExpMod.data(tc).rate_onset = NaN;
-    %          SimpExp.data(tc).rate_RT = NaN;
-    %          SimpExp.data(tc).rating = NaN;
          end
      end
     
@@ -248,7 +248,5 @@ function SimpleExposure_Mod(varargin)
     DrawFormattedText(w,'That concludes this task.','center','center',COLORS.WHITE);
     Screen('Flip', w);
     WaitSecs(10);
-    
-    sca
     
      end
