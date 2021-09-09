@@ -158,7 +158,7 @@ function SimpleExposure_Mod(varargin)
     commandwindow;
     
     
-    %%
+    %% Screen
     %set up the screen and dimensions
     %list all the screens, then just pick the last one in the list (if you have
     %only 1 monitor, then it just chooses that one)
