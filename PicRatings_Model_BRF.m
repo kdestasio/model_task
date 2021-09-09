@@ -1,13 +1,13 @@
 function PicRatings_Model_BRF()
 % Rate all images, choose top X picsn    
-global wRect w XCENTER rects mids COLORS KEYS PicRatings_Model_BRF
+global wRect window XCENTER rects mids COLORS KEYS PicRatings_Model_BRF
 
 %% Set important variables
 [mfilesdir,~,~] = fileparts(which('PicRatings_Model_BRF.m')); %find the directory that houses this script
 imgdir = [mfilesdir filesep 'Pics']; %UPDATE HERE TO CHANGE IMAGE DIRECTORY
 savedir = [mfilesdir filesep 'Results']; %output will be saved in this directory
-
-DEBUG=1; %1 debug, 0 display normally
+heightScaler = .5; % Change this to set the picture size relative to the screen. For ex., .5 will scale the image to 1/2 the screen height wile maintaining the aspect ratio.
+DEBUG=0; %1 debug, 0 display normally
 
 %% SETUP
 prompt={'SUBJECT ID' 'Wave'};% 'fMRI? (1 = Y, 0 = N)'};
@@ -112,16 +112,14 @@ end
 
 %open a window on that monitor. 32 refers to 32 bit color depth (millions of
 %colors), winRect will either be a 1024x768 box, or the whole screen. The
-%function returns a window "w", and a rect that represents the whole
+%function returns a window "window", and a rect that represents the whole
 %screen. 
-[w, wRect]=Screen('OpenWindow', screenNumber, 0,winRect,32,2);
+[window, wRect]=Screen('OpenWindow', screenNumber, 0,winRect,32,2);
 
-%% Pic Location
-picloc = [XCENTER-150, wRect(4)*.1, XCENTER+150, (wRect(4)*.1)+525];
 %%
 %you can set the font sizes and styles here
-Screen('TextFont', w, 'Arial');
-Screen('TextSize',w,35);
+Screen('TextFont', window, 'Arial');
+Screen('TextSize',window,35);
 
 %% Dat Grid
 [rects,mids] = DrawRectsGrid();
@@ -129,19 +127,19 @@ verbage = '.';
 
 %% Intro
 
-DrawFormattedText(w,'We are going to show you some pictures of people and have you rate how attractive each person is.\n\n You will use a scale from 1 to 9, where 1 is "Not at all attractive" and 9 is "Extremely attractive."\n\nPress any key to continue.','center','center',COLORS.WHITE,50,[],[],1.5);
-Screen('Flip',w);
+DrawFormattedText(window,'We are going to show you some pictures of people and have you rate how attractive each person is.\n\n You will use a scale from 1 to 9, where 1 is "Not at all attractive" and 9 is "Extremely attractive."\n\nPress any key to continue.','center','center',COLORS.WHITE,50,[],[],1.5);
+Screen('Flip',window);
 KbWait([],3);
 
-DrawFormattedText(w,'You will use the numbers along the top of the keyboard to select your rating. \n\nPress any key to continue.','center','center',COLORS.WHITE,50,[],[],1.5);
-Screen('Flip',w);
+DrawFormattedText(window,'You will use the numbers along the top of the keyboard to select your rating. \n\nPress any key to continue.','center','center',COLORS.WHITE,50,[],[],1.5);
+Screen('Flip',window);
 KbWait([],3);
 
 
-%% fMRI synch w/trigger
+%% fMRI synch window/trigger
 % if fmri == 1;
-%     DrawFormattedText(w,'Synching with fMRI: Waiting for trigger','center','center',COLORS.WHITE);
-%     Screen('Flip',w);
+%     DrawFormattedText(window,'Synching with fMRI: Waiting for trigger','center','center',COLORS.WHITE);
+%     Screen('Flip',window);
 %     
 %     scan_sec = KbTriggerWait(KEYS.trigger,xkeys);
 % else
@@ -149,11 +147,12 @@ KbWait([],3);
 % end
 
 %%
-DrawFormattedText(w,'The rating task will now begin.\n\nPress any key to continue.','center','center',COLORS.WHITE,50,[],[],1.5);
-Screen('Flip',w);
+DrawFormattedText(window,'The rating task will now begin.\n\nPress any key to continue.','center','center',COLORS.WHITE,50,[],[],1.5);
+Screen('Flip',window);
 KbWait([],3);
 WaitSecs(1);
 
+%% Pic Location
 
 for x = 1:20:length(PicRatings_Model_BRF)
     for y = 0:19
@@ -163,14 +162,19 @@ for x = 1:20:length(PicRatings_Model_BRF)
         end
         
         dat_pic = getfield(PicRatings_Model_BRF,{xy},'filename');
-        tp = imread(dat_pic);
-        tpx = Screen('MakeTexture',w,tp);          
-        Screen('DrawTexture',w,tpx,[],picloc);
+        theImage = imread(dat_pic); % Load in the image from a file
+        [imgH, imgW, ~] = size(theImage);
+        aspectRatio = imgW / imgH; % Get the aspect ratio to maintain when drawn in different size
+        imageHeight = sheight .* heightScaler;
+        imageWidth = imageHeight .* aspectRatio;
+        theRect = [XCENTER-(imageWidth(1)/2), wRect(4)*.1, XCENTER+(imageWidth(1)/2), imageHeight(1)+ 525];
+        imgTx = Screen('MakeTexture',window,theImage); % Convert the image to a texture      
+        Screen('DrawTexture',window,imgTx,[],theRect);
 
-        drawRatings([],w);
-        DrawFormattedText(w,verbage,'center',(wRect(4)*.75),COLORS.WHITE);
+        drawRatings([],window);
+        DrawFormattedText(window,verbage,'center',(wRect(4)*.75),COLORS.WHITE);
 
-        Screen('Flip',w);
+        Screen('Flip',window);
         
         FlushEvents();
             while 1
@@ -180,10 +184,10 @@ for x = 1:20:length(PicRatings_Model_BRF)
                     rating = KbName(find(keycode));
                     rating = str2double(rating(1));
                     
-                    Screen('DrawTexture',w,tpx,[],picloc);
-                    drawRatings(keycode,w);
-                    DrawFormattedText(w,verbage,'center',(wRect(4)*.75),COLORS.WHITE);
-                    Screen('Flip',w);
+                    Screen('DrawTexture',window,imgTx,[],theRect);
+                    drawRatings(keycode,window);
+                    DrawFormattedText(window,verbage,'center',(wRect(4)*.75),COLORS.WHITE);
+                    Screen('Flip',window);
                     WaitSecs(.25);
                     break;
                 end
@@ -191,20 +195,20 @@ for x = 1:20:length(PicRatings_Model_BRF)
             
             PicRatings_Model_BRF(xy).Rate_Att = rating;
            
-           Screen('Flip',w);
+           Screen('Flip',window);
            FlushEvents();
            WaitSecs(.25);
     end
     
     %Take a break every 20 pics.
-    Screen('Flip',w);
-    DrawFormattedText(w,'Press any key when you are ready to continue','center','center',COLORS.WHITE);
-    Screen('Flip',w);
+    Screen('Flip',window);
+    DrawFormattedText(window,'Press any key when you are ready to continue','center','center',COLORS.WHITE);
+    Screen('Flip',window);
     KbWait([],3);
     
 end
 
-Screen('Flip',w);
+Screen('Flip',window);
 WaitSecs(.5);
 
 
@@ -243,8 +247,8 @@ catch
     end
 end
 
-DrawFormattedText(w,'That concludes this task. The assessor will be with you soon.','center','center',COLORS.WHITE);
-Screen('Flip', w);
+DrawFormattedText(window,'That concludes this task. The assessor will be with you soon.','center','center',COLORS.WHITE);
+Screen('Flip', window);
 WaitSecs(10);
 
 sca
@@ -287,7 +291,7 @@ end
 %%
 function drawRatings(varargin)
 
-global w KEYS COLORS rects mids
+global window KEYS COLORS rects mids
 
 colors=repmat(COLORS.WHITE',1,9);
 % rects=horzcat(allRects.rate1rect',allRects.rate2rect',allRects.rate3rect',allRects.rate4rect');
@@ -337,7 +341,7 @@ if nargin>=2
     
 else
     
-    window=w;
+    window=window;
     
 end
    
