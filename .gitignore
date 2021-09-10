@@ -2,7 +2,7 @@
 .DS_Store
 
 # Directories
-Pics/*
+Pics*/*
 Results/*
 
 # Output files
