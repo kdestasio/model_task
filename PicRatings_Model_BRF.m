@@ -1,12 +1,12 @@
 function PicRatings_Model_BRF()
 % Rate all images, choose top X picsn    
-global wRect window XCENTER rects mids COLORS KEYS PicRatings_Model_BRF
+global wRect window XCENTER YCENTER rects mids COLORS KEYS PicRatings_Model_BRF
 
 %% Set important variables
 [mfilesdir,~,~] = fileparts(which('PicRatings_Model_BRF.m')); %find the directory that houses this script
 imgdir = [mfilesdir filesep 'Pics_rate']; %UPDATE HERE TO CHANGE IMAGE DIRECTORY
 savedir = [mfilesdir filesep 'Results']; %output will be saved in this directory
-heightScaler = .5; % Change this to set the picture size relative to the screen. For ex., .5 will scale the image to 1/2 the screen height wile maintaining the aspect ratio.
+heightScaler = .6; % Change this to set the picture size relative to the screen. For ex., .5 will scale the image to 1/2 the screen height wile maintaining the aspect ratio.
 DEBUG=0; %1 debug, 0 display normally
 
 %% SETUP
@@ -52,7 +52,7 @@ PICS =struct;
     PICS.in.avg = dir('Avg*');
     PICS.in.ow = dir('ow*');
     
-    if isempty(PICS.in.thin) || isempty(PICS.in.avg) || isempty(PICS.in.ow);
+    if isempty(PICS.in.thin) || isempty(PICS.in.avg) || isempty(PICS.in.ow)
         error('Could not find pics! Make sure a folder exists called "Pics" with all the appropriate images contained therein.')
     end
     
@@ -167,7 +167,7 @@ for x = 1:20:length(PicRatings_Model_BRF)
         aspectRatio = imgW / imgH; % Get the aspect ratio to maintain when drawn in different size
         imageHeight = sheight .* heightScaler; % Calculate new image height based on scaler variable
         imageWidth = imageHeight .* aspectRatio; % Calculate new width bassed on new height to maintain aspect ratio
-        theRect = [XCENTER-(imageWidth(1)/2), wRect(4)*.1, XCENTER+(imageWidth(1)/2), imageHeight(1)+525]; % Define image location on the screen
+        theRect = [XCENTER-(imageWidth(1)/2), YCENTER-(imageHeight(1)/2), XCENTER+(imageWidth(1)/2), YCENTER+(imageHeight(1)/2)]; % Define image location on the screen
         imgTx = Screen('MakeTexture',window,theImage); % Convert the image to a texture      
         Screen('DrawTexture',window,imgTx,[],theRect); % Display the resized image on the screen
 
