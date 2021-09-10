@@ -163,13 +163,13 @@ for x = 1:20:length(PicRatings_Model_BRF)
         
         dat_pic = getfield(PicRatings_Model_BRF,{xy},'filename');
         theImage = imread(dat_pic); % Load in the image from a file
-        [imgH, imgW, ~] = size(theImage);
+        [imgH, imgW, ~] = size(theImage); % Get the original height and width of the image
         aspectRatio = imgW / imgH; % Get the aspect ratio to maintain when drawn in different size
-        imageHeight = sheight .* heightScaler;
-        imageWidth = imageHeight .* aspectRatio;
-        theRect = [XCENTER-(imageWidth(1)/2), wRect(4)*.1, XCENTER+(imageWidth(1)/2), imageHeight(1)+ 525];
+        imageHeight = sheight .* heightScaler; % Calculate new image height based on scaler variable
+        imageWidth = imageHeight .* aspectRatio; % Calculate new width bassed on new height to maintain aspect ratio
+        theRect = [XCENTER-(imageWidth(1)/2), wRect(4)*.1, XCENTER+(imageWidth(1)/2), imageHeight(1)+525]; % Define image location on the screen
         imgTx = Screen('MakeTexture',window,theImage); % Convert the image to a texture      
-        Screen('DrawTexture',window,imgTx,[],theRect);
+        Screen('DrawTexture',window,imgTx,[],theRect); % Display the resized image on the screen
 
         drawRatings([],window);
         DrawFormattedText(window,verbage,'center',(wRect(4)*.75),COLORS.WHITE);
