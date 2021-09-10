@@ -4,7 +4,7 @@ function SimpleExposure_Mod(varargin)
     
     %% IMPORTANT VARIABLES
     [mdir,~,~] = fileparts(which('SimpleExposure_Mod.m')); % find the directory that houses this script
-    imgdir = fullfile(mdir,'Pics'); % UPDATE HERE TO CHANGE IMAGE DIRECTORY
+    imgdir = fullfile(mdir,'Pics_scan'); % UPDATE HERE TO CHANGE IMAGE DIRECTORY
     savedir = [mdir filesep 'Results' filesep]; % output will be saved in this directory
     trials_perblock = 20; % Should equal number of images per category
     trials_total = 40; % Should equal total number of images

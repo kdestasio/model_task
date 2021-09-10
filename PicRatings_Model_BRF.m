@@ -4,7 +4,7 @@ global wRect window XCENTER rects mids COLORS KEYS PicRatings_Model_BRF
 
 %% Set important variables
 [mfilesdir,~,~] = fileparts(which('PicRatings_Model_BRF.m')); %find the directory that houses this script
-imgdir = [mfilesdir filesep 'Pics']; %UPDATE HERE TO CHANGE IMAGE DIRECTORY
+imgdir = [mfilesdir filesep 'Pics_rate']; %UPDATE HERE TO CHANGE IMAGE DIRECTORY
 savedir = [mfilesdir filesep 'Results']; %output will be saved in this directory
 heightScaler = .5; % Change this to set the picture size relative to the screen. For ex., .5 will scale the image to 1/2 the screen height wile maintaining the aspect ratio.
 DEBUG=0; %1 debug, 0 display normally
