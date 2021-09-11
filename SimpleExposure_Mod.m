@@ -8,7 +8,7 @@ function SimpleExposure_Mod(varargin)
     savedir = [mdir filesep 'Results' filesep]; % output will be saved in this directory
     trials_perblock = 20; % Should equal number of images per category
     trials_total = 40; % Should equal total number of images
-    DEBUG=1; % 1 debug, 0 display normally
+    DEBUG=0; % 1 debug, 0 display normally
     
     %% SETUP
     prompt={'SUBJECT ID' 'fMRI: 1 = Yes; 0 = No' 'Session: 1 = Pre; 2 = Post'};
