@@ -251,8 +251,6 @@ DrawFormattedText(window,'That concludes this task. The assessor will be with yo
 Screen('Flip', window);
 WaitSecs(10);
 
-sca
-
 end
 
 %%
