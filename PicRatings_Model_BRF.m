@@ -225,18 +225,23 @@ PicRating_Mod.Avg = cell2struct(postsort_avg,fields,2);
 PicRating_Mod.Thin = cell2struct(postsort_thin,fields,2);
 PicRating_Mod.Ow = cell2struct(postsort_ow,fields,2);
 
+T = cell2table(presort); 
+T.Properties.VariableNames = fields;
+
 if SESS == 1
     savefilename = sprintf('PicRate_Mod%d.mat',ID);
+    tableFileName = sprintf('PicRate_Mod%d.xlsx',ID);
 else
     savefilename = sprintf('PicRate_Mod%d_%d.mat',ID,SESS);
+    tableFileName = sprintf('PicRate_Mod%d_%d.xlsx',ID,SESS);
 end
 
 savefile = fullfile(savedir,savefilename);
-
-
+savetable = fullfile(savedir,tableFileName);
 
 try
 save(savefile,'PicRating_Mod');
+writetable(T,savetable);
 catch
     warning('Something is amiss with this save. Retrying to save in a more general location...');
     try
