@@ -162,7 +162,7 @@ function SimpleExposure_Mod(varargin)
     %set up the screen and dimensions
     %list all the screens, then just pick the last one in the list (if you have
     %only 1 monitor, then it just chooses that one)
-    Screen('Preference', 'SkipSyncTests', 1);
+    Screen('Preference', 'SkipSyncTests', 0);
     
     screenNumber=max(Screen('Screens'));
     
