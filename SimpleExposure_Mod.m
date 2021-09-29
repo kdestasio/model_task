@@ -199,7 +199,7 @@ function SimpleExposure_Mod(varargin)
         DrawFormattedText(w,'Synching with fMRI: Waiting for trigger','center','center',COLORS.WHITE);
         Screen('Flip',w);
         
-        scan_sec = KbTriggerWait(KEYS.trigger,xkeys);
+        scan_sec = ScanTrig('/dev/cu.usbserial');
     else
         scan_sec = GetSecs();
     end
@@ -249,4 +249,16 @@ function SimpleExposure_Mod(varargin)
     Screen('Flip', w);
     WaitSecs(10);
     
-     end
+end
+     
+function ScanTrig(port)
+%  this routine will generate a trigger using a serial port device
+%  on a mac, use '/dev/cu.usbserial' or whatever it is, for port
+%  >>ScanTrif('/dev/cu.usbserial');
+
+    sport = serial(port, 'BaudRate', 300);
+    fopen(sport);
+    fprintf(sport, '\7');
+    fclose(sport);
+    return
+end
